@@ -1,0 +1,890 @@
+{
+  "project": {
+    "name": "Advanced SpamAssassin Learning System",
+    "description": "Comprehensive spam training system with reporting, statistics, and intelligence",
+    "version": "1.0.0",
+    "language": "Python 3.8+",
+    "license": "MIT"
+  },
+  "overview": {
+    "purpose": "Train SpamAssassin by learning from spam folders, report repeat offenders, maintain statistics, and provide intelligent spam detection",
+    "execution_modes": [
+      "Interactive terminal menu",
+      "Cron/scheduled automation",
+      "Command-line single operations"
+    ],
+    "core_objectives": [
+      "Learn from spam/ham folders continuously",
+      "Report malicious senders to blacklists",
+      "Track and block repeat offenders",
+      "Maintain detailed statistics",
+      "Integrate with mail systems",
+      "Provide intelligent spam analysis"
+    ]
+  },
+  "features": {
+    "basic_functions": {
+      "category": "Grunnleggende funksjoner (1-7)",
+      "items": [
+        {
+          "id": 1,
+          "name": "Automatisk scanning av Maildir/IMAP spam-mapper",
+          "description": "Skanner alle brukeres spam-mapper automatisk",
+          "status": "included"
+        },
+        {
+          "id": 2,
+          "name": "sa-learn trening (spam + ham/ikke-spam)",
+          "description": "Trener SpamAssassin med både spam og legitime meldinger",
+          "status": "included"
+        },
+        {
+          "id": 3,
+          "name": "Konfigurasjonsfil (YAML/JSON) for enkelt oppsett",
+          "description": "YAML konfigurasjon for all innstillinger",
+          "status": "included"
+        },
+        {
+          "id": 4,
+          "name": "Logging til fil med rotasjon",
+          "description": "Detaljert logging med automatisk rotasjon",
+          "status": "included"
+        },
+        {
+          "id": 5,
+          "name": "Enkel statistikk (antall lært, feilrate)",
+          "description": "Grunnleggende statistikk i database",
+          "status": "included"
+        },
+        {
+          "id": 6,
+          "name": "Terminal meny for manuell kjøring",
+          "description": "Interaktiv meny med alle funksjoner",
+          "status": "included"
+        },
+        {
+          "id": 7,
+          "name": "Cron-vennlig modus (quiet mode)",
+          "description": "Stille modus for automatisk kjøring",
+          "status": "included"
+        }
+      ]
+    },
+    "advanced_learning": {
+      "category": "Avansert spam-læring (8-12)",
+      "items": [
+        {
+          "id": 8,
+          "name": "Multi-bruker støtte (alle mailbokser på server)",
+          "description": "Skanner alle brukere automatisk",
+          "status": "included"
+        },
+        {
+          "id": 9,
+          "name": "Intelligent filtrering (kun lær fra meldinger eldre enn X dager)",
+          "description": "Unngår å lære fra nye meldinger som kan være feilklassifisert",
+          "status": "included"
+        },
+        {
+          "id": 10,
+          "name": "Bayes database vedlikehold (expire, backup)",
+          "description": "Automatisk backup og vedlikehold av Bayes database",
+          "status": "included"
+        },
+        {
+          "id": 11,
+          "name": "Auto-whitelisting av kjente kontakter",
+          "description": "Whitelist bekjentede avsendere automatisk",
+          "status": "included"
+        },
+        {
+          "id": 12,
+          "name": "Lær fra false positives (ham fra spam-folder tilbake til inbox)",
+          "description": "Håndterer feilklassifiserte meldinger",
+          "status": "included"
+        }
+      ]
+    },
+    "reporting_blocking": {
+      "category": "Rapportering & blokking (13-19)",
+      "items": [
+        {
+          "id": 13,
+          "name": "Automatisk rapportering til SpamCop",
+          "description": "Rapporter spam til SpamCop automatisk",
+          "status": "included"
+        },
+        {
+          "id": 14,
+          "name": "Rapportering til Spamhaus",
+          "description": "Rapporter til Spamhaus blacklist",
+          "status": "included"
+        },
+        {
+          "id": 15,
+          "name": "Rapportering til abuse@-adresser hos ISP",
+          "description": "Send rapporter til ISP abuse kontakter",
+          "status": "included"
+        },
+        {
+          "id": 16,
+          "name": "DNSBL-sjekk av avsendere før rapportering",
+          "description": "Sjekk om IP allerede er blacklistet",
+          "status": "included"
+        },
+        {
+          "id": 17,
+          "name": "Terskelverdier for rapportering (X spam på Y dager)",
+          "description": "Konfigurerbare terskler før rapportering",
+          "status": "included"
+        },
+        {
+          "id": 18,
+          "name": "IP-blokkering via firewall (iptables/CSF/Fail2Ban integrasjon)",
+          "description": "Automatisk blokkering via firewall",
+          "status": "included"
+        },
+        {
+          "id": 19,
+          "name": "Postfix/Exim blacklist integrasjon",
+          "description": "Oppdater MTA blacklists automatisk",
+          "status": "included"
+        }
+      ]
+    },
+    "statistics_reporting": {
+      "category": "Statistikk & rapportering (20-26)",
+      "items": [
+        {
+          "id": 20,
+          "name": "Database for historikk (SQLite)",
+          "description": "SQLite database for all historikk og statistikk",
+          "status": "included"
+        },
+        {
+          "id": 21,
+          "name": "Daglige/ukentlige email-rapporter",
+          "description": "Automatiske rapporter via email",
+          "status": "included"
+        },
+        {
+          "id": 22,
+          "name": "Web-dashboard (Flask/Django)",
+          "description": "Web interface for statistikk og administrasjon",
+          "status": "planned"
+        },
+        {
+          "id": 23,
+          "name": "Graf over spam-trender",
+          "description": "Visualisering av spam trender over tid",
+          "status": "planned"
+        },
+        {
+          "id": 24,
+          "name": "Top spam-avsendere liste",
+          "description": "Liste over verste spam-avsendere",
+          "status": "included"
+        },
+        {
+          "id": 25,
+          "name": "Effektivitetsmåling (før/etter scoring)",
+          "description": "Mål effekten av trening",
+          "status": "included"
+        },
+        {
+          "id": 26,
+          "name": "Export til CSV/JSON",
+          "description": "Eksporter statistikk til CSV eller JSON",
+          "status": "included"
+        }
+      ]
+    },
+    "security_maintenance": {
+      "category": "Sikkerhet & vedlikehold (27-34)",
+      "items": [
+        {
+          "id": 27,
+          "name": "Automatisk Bayes database backup",
+          "description": "Daglig backup av Bayes database",
+          "status": "included"
+        },
+        {
+          "id": 28,
+          "name": "Sjekk av SpamAssassin konfiguration",
+          "description": "Validering av SA konfigurasjon",
+          "status": "included"
+        },
+        {
+          "id": 29,
+          "name": "Rule updates (sa-update) før læring",
+          "description": "Automatisk oppdatering av regler",
+          "status": "included"
+        },
+        {
+          "id": 30,
+          "name": "Checksum-verifisering av lærte meldinger (unngå duplikater)",
+          "description": "SHA256 hash for å unngå duplikater",
+          "status": "included"
+        },
+        {
+          "id": 31,
+          "name": "Dry-run modus for testing",
+          "description": "Test uten å faktisk lære",
+          "status": "included"
+        },
+        {
+          "id": 32,
+          "name": "Email-varsling ved feil/problemer",
+          "description": "Automatisk varsling ved feil",
+          "status": "included"
+        },
+        {
+          "id": 33,
+          "name": "Sikker håndtering av credentials (keyring/vault)",
+          "description": "Sikker lagring av passord og API keys",
+          "status": "planned"
+        },
+        {
+          "id": 34,
+          "name": "Automatisk cleanup av gamle loggfiler",
+          "description": "Rotasjon og sletting av gamle logger",
+          "status": "included"
+        }
+      ]
+    },
+    "integrations": {
+      "category": "Integrasjoner (35-41)",
+      "items": [
+        {
+          "id": 35,
+          "name": "Plesk API integrasjon",
+          "description": "Hent mailbokser fra Plesk API",
+          "status": "included"
+        },
+        {
+          "id": 36,
+          "name": "cPanel API integrasjon",
+          "description": "Hent mailbokser fra cPanel API",
+          "status": "included"
+        },
+        {
+          "id": 37,
+          "name": "IMAP/IMAPS støtte (ikke bare Maildir)",
+          "description": "Support for IMAP mailbokser",
+          "status": "included"
+        },
+        {
+          "id": 38,
+          "name": "Dovecot integrasjon",
+          "description": "Integrasjon med Dovecot mail server",
+          "status": "included"
+        },
+        {
+          "id": 39,
+          "name": "Rspamd integrasjon (alternativ til SA)",
+          "description": "Support for Rspamd som alternativ",
+          "status": "planned"
+        },
+        {
+          "id": 40,
+          "name": "Greylisting koordinering",
+          "description": "Koordinering med greylisting systemer",
+          "status": "planned"
+        },
+        {
+          "id": 41,
+          "name": "ClamAV virus-sjekk integrering",
+          "description": "Sjekk for virus i emails",
+          "status": "included"
+        }
+      ]
+    },
+    "intelligent_features": {
+      "category": "Intelligente funksjoner (42-49)",
+      "items": [
+        {
+          "id": 42,
+          "name": "Machine learning scoring (Python scikit-learn)",
+          "description": "ML-basert spam scoring",
+          "status": "planned"
+        },
+        {
+          "id": 43,
+          "name": "Anomali-deteksjon for spam-campaigns",
+          "description": "Detekter plutselige spam-kampanjer",
+          "status": "included"
+        },
+        {
+          "id": 44,
+          "name": "Automatisk tuning av SA score-terskler",
+          "description": "Auto-juster score terskler basert på resultater",
+          "status": "planned"
+        },
+        {
+          "id": 45,
+          "name": "Spam-pattern analyse",
+          "description": "Analyser spam mønstre og kategorier",
+          "status": "included"
+        },
+        {
+          "id": 46,
+          "name": "Geografisk filtrering (block land/regioner)",
+          "description": "Blokker basert på geografisk opprinnelse",
+          "status": "planned"
+        },
+        {
+          "id": 47,
+          "name": "SPF/DKIM/DMARC validering før læring",
+          "description": "Valider autentisering før læring",
+          "status": "included"
+        },
+        {
+          "id": 48,
+          "name": "Header-analyse for forgeries",
+          "description": "Analyser headers for forfalskning",
+          "status": "included"
+        },
+        {
+          "id": 49,
+          "name": "Automatisk kategorisering av spam-typer",
+          "description": "Kategoriser spam (phishing, pharmacy, etc)",
+          "status": "included"
+        }
+      ]
+    },
+    "notifications": {
+      "category": "Notifikasjoner (50-54)",
+      "items": [
+        {
+          "id": 50,
+          "name": "Email-varsling",
+          "description": "Send varsler via email",
+          "status": "included"
+        },
+        {
+          "id": 51,
+          "name": "Slack/Discord webhooks",
+          "description": "Send varsler til Slack eller Discord",
+          "status": "included"
+        },
+        {
+          "id": 52,
+          "name": "Telegram bot",
+          "description": "Telegram bot for varsler",
+          "status": "included"
+        },
+        {
+          "id": 53,
+          "name": "SMS-varsling (Twilio/etc)",
+          "description": "SMS varsler via Twilio",
+          "status": "planned"
+        },
+        {
+          "id": 54,
+          "name": "Pushover/Pushbullet notifications",
+          "description": "Push notifications",
+          "status": "planned"
+        }
+      ]
+    }
+  },
+  "architecture": {
+    "components": [
+      {
+        "name": "Config",
+        "description": "Configuration manager using YAML",
+        "file": "spam_trainer.py",
+        "class": "Config"
+      },
+      {
+        "name": "Database",
+        "description": "SQLite database handler for statistics and tracking",
+        "file": "spam_trainer.py",
+        "class": "Database"
+      },
+      {
+        "name": "Logger",
+        "description": "Enhanced logging with rotation",
+        "file": "spam_trainer.py",
+        "class": "Logger"
+      },
+      {
+        "name": "SpamAssassinLearner",
+        "description": "Main learning engine for spam/ham training",
+        "file": "spam_trainer.py",
+        "class": "SpamAssassinLearner"
+      },
+      {
+        "name": "SpamReporter",
+        "description": "Report spam to external services",
+        "file": "spam_trainer.py",
+        "class": "SpamReporter"
+      },
+      {
+        "name": "FirewallManager",
+        "description": "Manage firewall rules for blocking",
+        "file": "spam_trainer.py",
+        "class": "FirewallManager"
+      },
+      {
+        "name": "IntelligenceEngine",
+        "description": "Advanced spam intelligence and pattern recognition",
+        "file": "spam_trainer.py",
+        "class": "IntelligenceEngine"
+      },
+      {
+        "name": "NotificationManager",
+        "description": "Handle various notification channels",
+        "file": "spam_trainer.py",
+        "class": "NotificationManager"
+      },
+      {
+        "name": "StatisticsReporter",
+        "description": "Generate statistics reports",
+        "file": "spam_trainer.py",
+        "class": "StatisticsReporter"
+      },
+      {
+        "name": "IntegrationManager",
+        "description": "Handle third-party integrations",
+        "file": "spam_trainer.py",
+        "class": "IntegrationManager"
+      },
+      {
+        "name": "SpamTrainerApp",
+        "description": "Main application orchestrator",
+        "file": "spam_trainer.py",
+        "class": "SpamTrainerApp"
+      }
+    ],
+    "database_schema": {
+      "tables": [
+        {
+          "name": "learning_history",
+          "description": "Track all learned messages",
+          "columns": [
+            "id (INTEGER PRIMARY KEY)",
+            "timestamp (DATETIME)",
+            "email_hash (TEXT)",
+            "message_type (TEXT)",
+            "sender (TEXT)",
+            "subject (TEXT)",
+            "spam_score (REAL)",
+            "learned (BOOLEAN)"
+          ]
+        },
+        {
+          "name": "sender_tracking",
+          "description": "Track sender statistics and behavior",
+          "columns": [
+            "id (INTEGER PRIMARY KEY)",
+            "sender_email (TEXT UNIQUE)",
+            "sender_ip (TEXT)",
+            "spam_count (INTEGER)",
+            "ham_count (INTEGER)",
+            "first_seen (DATETIME)",
+            "last_seen (DATETIME)",
+            "reported (BOOLEAN)",
+            "blocked (BOOLEAN)"
+          ]
+        },
+        {
+          "name": "daily_stats",
+          "description": "Daily aggregated statistics",
+          "columns": [
+            "date (DATE PRIMARY KEY)",
+            "spam_learned (INTEGER)",
+            "ham_learned (INTEGER)",
+            "emails_processed (INTEGER)",
+            "senders_reported (INTEGER)",
+            "ips_blocked (INTEGER)"
+          ]
+        },
+        {
+          "name": "reported_senders",
+          "description": "Log of reported senders",
+          "columns": [
+            "id (INTEGER PRIMARY KEY)",
+            "sender_email (TEXT)",
+            "sender_ip (TEXT)",
+            "report_date (DATETIME)",
+            "report_service (TEXT)",
+            "response (TEXT)"
+          ]
+        },
+        {
+          "name": "spam_patterns",
+          "description": "Detected spam patterns",
+          "columns": [
+            "id (INTEGER PRIMARY KEY)",
+            "pattern_type (TEXT)",
+            "pattern_value (TEXT)",
+            "occurrence_count (INTEGER)",
+            "first_seen (DATETIME)",
+            "last_seen (DATETIME)",
+            "category (TEXT)"
+          ]
+        }
+      ]
+    }
+  },
+  "configuration": {
+    "file_format": "YAML",
+    "default_path": "/etc/spamtrainer/config.yaml",
+    "sections": {
+      "general": {
+        "maildir_base": "/var/vmail",
+        "sa_learn_bin": "/usr/bin/sa-learn",
+        "sa_update_bin": "/usr/bin/sa-update",
+        "min_message_age_days": 1,
+        "dry_run": false,
+        "quiet_mode": false
+      },
+      "learning": {
+        "multi_user": true,
+        "learn_spam": true,
+        "learn_ham": true,
+        "skip_duplicates": true,
+        "auto_whitelist": true,
+        "false_positive_learning": true
+      },
+      "bayes": {
+        "auto_backup": true,
+        "backup_dir": "/var/backups/spamassassin",
+        "auto_expire": true,
+        "expire_days": 180
+      },
+      "reporting": {
+        "enabled": true,
+        "spamcop_enabled": false,
+        "spamhaus_enabled": false,
+        "abuse_reporting": true,
+        "threshold_count": 5,
+        "threshold_days": 7,
+        "dnsbl_check": true
+      },
+      "blocking": {
+        "firewall_blocking": false,
+        "fail2ban_integration": true,
+        "postfix_blacklist": true,
+        "exim_blacklist": false
+      },
+      "statistics": {
+        "database_enabled": true,
+        "email_reports": true,
+        "report_frequency": "weekly",
+        "report_to": "admin@localhost"
+      },
+      "integrations": {
+        "plesk_api": false,
+        "cpanel_api": false,
+        "imap_enabled": true,
+        "dovecot_integration": true,
+        "rspamd_enabled": false,
+        "clamav_check": true
+      },
+      "intelligence": {
+        "ml_scoring": false,
+        "anomaly_detection": true,
+        "auto_tuning": false,
+        "pattern_analysis": true,
+        "geo_filtering": false,
+        "spf_dkim_check": true,
+        "header_analysis": true,
+        "spam_categorization": true
+      },
+      "notifications": {
+        "email": true,
+        "slack_webhook": "",
+        "discord_webhook": "",
+        "telegram_bot_token": "",
+        "telegram_chat_id": "",
+        "sms_enabled": false
+      }
+    }
+  },
+  "file_structure": {
+    "main_script": "spam_trainer.py",
+    "config_file": "/etc/spamtrainer/config.yaml",
+    "database": "/var/lib/spamtrainer/spamtrainer.db",
+    "log_file": "/var/log/spamtrainer/spamtrainer.log",
+    "backup_dir": "/var/backups/spamassassin/",
+    "dependencies": "requirements.txt"
+  },
+  "dependencies": {
+    "python_version": "3.8+",
+    "required_packages": [
+      "pyyaml",
+      "dnspython",
+      "requests"
+    ],
+    "optional_packages": [
+      "scikit-learn (for ML features)",
+      "flask (for web dashboard)",
+      "matplotlib (for graphs)",
+      "pandas (for data analysis)"
+    ],
+    "system_requirements": [
+      "SpamAssassin (sa-learn, sa-update)",
+      "SQLite3",
+      "Optional: Postfix/Exim",
+      "Optional: Fail2Ban",
+      "Optional: ClamAV",
+      "Optional: iptables/firewalld"
+    ]
+  },
+  "usage": {
+    "interactive_menu": {
+      "command": "./spam_trainer.py",
+      "description": "Launch interactive menu with all options"
+    },
+    "cron_mode": {
+      "command": "./spam_trainer.py --cron",
+      "description": "Run in automated cron mode",
+      "example_cron": "0 2 * * * /usr/local/bin/spam_trainer.py --cron"
+    },
+    "learning_only": {
+      "command": "./spam_trainer.py --learn",
+      "description": "Run learning cycle only"
+    },
+    "report_generation": {
+      "command": "./spam_trainer.py --report",
+      "description": "Generate and send report"
+    },
+    "dry_run": {
+      "command": "./spam_trainer.py --dry-run --learn",
+      "description": "Test without actually learning"
+    },
+    "custom_config": {
+      "command": "./spam_trainer.py --config /path/to/config.yaml",
+      "description": "Use custom configuration file"
+    }
+  },
+  "menu_options": [
+    {
+      "option": 1,
+      "name": "Run learning cycle (scan and learn)",
+      "description": "Execute complete learning cycle"
+    },
+    {
+      "option": 2,
+      "name": "Update SpamAssassin rules",
+      "description": "Run sa-update"
+    },
+    {
+      "option": 3,
+      "name": "Backup Bayes database",
+      "description": "Manual Bayes backup"
+    },
+    {
+      "option": 4,
+      "name": "Show statistics (last 7 days)",
+      "description": "Display weekly statistics"
+    },
+    {
+      "option": 5,
+      "name": "Show statistics (last 30 days)",
+      "description": "Display monthly statistics"
+    },
+    {
+      "option": 6,
+      "name": "Export statistics to JSON",
+      "description": "Export stats to JSON file"
+    },
+    {
+      "option": 7,
+      "name": "Export statistics to CSV",
+      "description": "Export stats to CSV file"
+    },
+    {
+      "option": 8,
+      "name": "Process repeat offenders",
+      "description": "Check and report repeat spammers"
+    },
+    {
+      "option": 9,
+      "name": "Generate and send report",
+      "description": "Create and email report"
+    },
+    {
+      "option": 10,
+      "name": "View configuration",
+      "description": "Display current config"
+    },
+    {
+      "option": 11,
+      "name": "Edit configuration",
+      "description": "Edit config file"
+    },
+    {
+      "option": 12,
+      "name": "Test notifications",
+      "description": "Send test notifications"
+    },
+    {
+      "option": 13,
+      "name": "View database info",
+      "description": "Show database statistics"
+    },
+    {
+      "option": 14,
+      "name": "Clean old logs",
+      "description": "Remove old log files"
+    },
+    {
+      "option": 0,
+      "name": "Exit",
+      "description": "Exit application"
+    }
+  ],
+  "installation": {
+    "steps": [
+      {
+        "step": 1,
+        "action": "Install Python dependencies",
+        "command": "pip3 install -r requirements.txt"
+      },
+      {
+        "step": 2,
+        "action": "Create configuration directory",
+        "command": "mkdir -p /etc/spamtrainer"
+      },
+      {
+        "step": 3,
+        "action": "Create data directories",
+        "command": "mkdir -p /var/lib/spamtrainer /var/log/spamtrainer /var/backups/spamassassin"
+      },
+      {
+        "step": 4,
+        "action": "Copy script to system",
+        "command": "cp spam_trainer.py /usr/local/bin/ && chmod +x /usr/local/bin/spam_trainer.py"
+      },
+      {
+        "step": 5,
+        "action": "Run initial setup",
+        "command": "/usr/local/bin/spam_trainer.py"
+      },
+      {
+        "step": 6,
+        "action": "Configure settings via menu (option 11)",
+        "command": "Edit /etc/spamtrainer/config.yaml"
+      },
+      {
+        "step": 7,
+        "action": "Add to cron",
+        "command": "crontab -e",
+        "example": "0 2 * * * /usr/local/bin/spam_trainer.py --cron"
+      }
+    ]
+  },
+  "workflow": {
+    "learning_cycle": [
+      "1. Update SpamAssassin rules (sa-update)",
+      "2. Backup Bayes database",
+      "3. Scan all user mailboxes",
+      "4. Learn from .Spam folders (spam)",
+      "5. Learn from inbox folders (ham)",
+      "6. Skip duplicates using SHA256 hash",
+      "7. Filter by message age",
+      "8. Update statistics database",
+      "9. Process repeat offenders",
+      "10. Send notifications if needed"
+    ],
+    "reporting_cycle": [
+      "1. Query database for repeat offenders",
+      "2. Check thresholds (X spam in Y days)",
+      "3. Perform DNSBL check",
+      "4. Report to SpamCop (if enabled)",
+      "5. Report to Spamhaus (if enabled)",
+      "6. Report to abuse contacts",
+      "7. Update firewall rules (if enabled)",
+      "8. Mark senders as reported",
+      "9. Log all actions"
+    ],
+    "statistics_cycle": [
+      "1. Aggregate daily statistics",
+      "2. Calculate trends",
+      "3. Identify top spammers",
+      "4. Generate report text",
+      "5. Send via configured channels",
+      "6. Export to files if requested"
+    ]
+  },
+  "security_considerations": [
+    "Run as dedicated user with minimal permissions",
+    "Store credentials securely (future: use keyring)",
+    "Validate all email inputs",
+    "Use parameterized SQL queries",
+    "Limit file system access",
+    "Sanitize all external data",
+    "Use SSL/TLS for all network connections",
+    "Log all security-relevant actions"
+  ],
+  "future_enhancements": [
+    "Web dashboard with Flask/Django",
+    "Real-time graphing of spam trends",
+    "Machine learning integration (scikit-learn)",
+    "Automatic threshold tuning",
+    "Geographic filtering",
+    "Rspamd integration",
+    "Greylisting coordination",
+    "SMS notifications via Twilio",
+    "Push notifications",
+    "API endpoint for external queries",
+    "Docker containerization",
+    "Kubernetes deployment support",
+    "Multi-server coordination",
+    "Distributed learning",
+    "AI-powered spam prediction"
+  ],
+  "testing": {
+    "dry_run_mode": "Test all operations without making changes",
+    "test_notifications": "Send test messages to all channels",
+    "validate_config": "Check configuration file syntax",
+    "database_integrity": "Verify database schema and data",
+    "performance_testing": "Measure learning speed and efficiency"
+  },
+  "troubleshooting": {
+    "common_issues": [
+      {
+        "issue": "sa-learn not found",
+        "solution": "Install SpamAssassin or set correct path in config"
+      },
+      {
+        "issue": "Permission denied on mailboxes",
+        "solution": "Run as root or mail user with proper permissions"
+      },
+      {
+        "issue": "Database locked",
+        "solution": "Check for other running instances"
+      },
+      {
+        "issue": "No emails learned",
+        "solution": "Check maildir_base path and folder structure"
+      },
+      {
+        "issue": "Notifications not working",
+        "solution": "Verify SMTP settings and notification configuration"
+      }
+    ]
+  },
+  "performance": {
+    "expected_speed": "~100-500 emails per minute",
+    "database_size": "~1MB per 10000 learned emails",
+    "memory_usage": "~50-100MB during operation",
+    "cpu_usage": "Low except during learning cycles",
+    "disk_io": "Moderate during scanning and learning"
+  },
+  "compliance": {
+    "gdpr": "Email addresses are hashed for privacy",
+    "logging": "All actions are logged for audit",
+    "data_retention": "Configurable via expire_days setting",
+    "user_consent": "Only processes server-side spam folders"
+  },
+  "support": {
+    "documentation": "README.md and inline code comments",
+    "logs": "/var/log/spamtrainer/spamtrainer.log",
+    "debug_mode": "Use --dry-run and check logs",
+    "configuration_help": "All settings documented in config.yaml"
+  }
+}

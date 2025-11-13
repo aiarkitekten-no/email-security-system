@@ -1,0 +1,327 @@
+# Advanced SpamAssassin Learning System Configuration v3.0
+
+general:
+  # Mail directory location - CHANGE THIS FOR YOUR SYSTEM:
+  #   Plesk/qmail:        /var/qmail/mailnames
+  #   Standard Maildir:   /var/vmail
+  #   Dovecot:            check with: doveconf mail_location
+  maildir_base: /var/qmail/mailnames
+  
+  sa_learn_bin: /usr/bin/sa-learn
+  sa_update_bin: /usr/bin/sa-update
+  min_message_age_days: 1
+  dry_run: false
+  quiet_mode: false
+  
+  # Batch learning - processes 50 emails at once for 10-20x faster learning
+  # Disable for more granular error reporting, but much slower
+  batch_learning: true
+  
+  # Limit ham (legitimate) emails per folder to avoid overwhelming SpamAssassin
+  # Set to 0 for unlimited (not recommended)
+  max_ham_per_folder: 100
+  
+  # NEW v3.0: Incremental learning - only process new emails
+  incremental_learning: true
+  
+  # NEW v3.0: Parallel processing (number of workers, 0 = auto-detect CPUs)
+  parallel_workers: 0
+  
+  # NEW v3.0: Memory-mapped file processing
+  use_mmap: true
+
+learning:
+  multi_user: true
+  learn_spam: true
+  
+  # v3.0: IMPORTANT - Ham learning is DISABLED
+  # System now only learns from confirmed spam in .Spam/.Junk folders
+  # Regular folders (INBOX/Sent) are checked for DNSBL-listed senders only
+  # Senders with 5+ emails from blacklisted IPs are automatically blocked
+  # This prevents false positives and makes SpamAssassin smarter over time
+  learn_ham: false
+  
+  # Minimum emails from DNSBL-listed sender before blocking (default: 5)
+  blacklist_threshold: 5
+  
+  # v3.0: Trash folder scanning - Learn from recently deleted spam
+  # Catches spam that users delete directly without moving to .Spam first
+  scan_trash: true
+  trash_max_age_days: 7  # Only learn from emails deleted within last 7 days
+  
+  skip_duplicates: true
+  auto_whitelist: true
+  false_positive_learning: true
+
+bayes:
+  auto_backup: true
+  backup_dir: /var/backups/spamassassin
+  auto_expire: true
+  expire_days: 180
+
+reporting:
+  enabled: true
+  spamcop_enabled: false
+  spamcop_email: ""
+  spamhaus_enabled: true
+  spamhaus_api_key: "YOUR_SPAMHAUS_API_KEY_HERE"
+  
+  # NEW v3.3.1: Spamhaus rate limiting & queue
+  spamhaus_max_per_run: 50         # Max submissions per run before pausing
+  spamhaus_retry_after_429: 3600   # Cooldown after 429 (seconds, default: 1 hour)
+  spamhaus_use_queue: true         # Queue rate-limited submissions for later
+  
+  abuse_reporting: true
+  threshold_count: 5
+  threshold_days: 7
+  dnsbl_check: true
+  dnsbl_servers:
+    - zen.spamhaus.org
+    - bl.spamcop.net
+    - dnsbl.sorbs.net
+    - b.barracudacentral.org        # NEW v3.0
+    - psbl.surriel.com               # NEW v3.0
+    - dnsbl-1.uceprotect.net         # NEW v3.0
+    - bl.spameatingmonkey.net        # NEW v3.0
+  
+  # NEW v3.0: HTML Email Reports
+  html_reports: true
+  html_report_to: terje@smartesider.no
+  html_report_frequency: daily     # daily, weekly, monthly
+  include_charts: true
+  include_trends: true
+  include_geo_map: false           # Requires geolocation data
+  
+  # NEW v3.0: Prometheus metrics
+  prometheus_enabled: true
+  prometheus_port: 9090
+  
+  # NEW v3.0: Syslog
+  syslog_enabled: true
+  syslog_host: localhost
+  syslog_port: 514
+  syslog_facility: local0
+
+blocking:
+  firewall_blocking: false
+  fail2ban_integration: true
+  fail2ban_jail: spamassassin
+  postfix_blacklist: true
+  postfix_blacklist_file: /etc/postfix/sender_access
+  exim_blacklist: false
+  exim_blacklist_file: /etc/exim4/sender_blacklist
+
+statistics:
+  database_enabled: true
+  database_path: /tmp/spamtrainer.db
+  email_reports: true
+  report_frequency: weekly
+  report_to: admin@localhost
+  smtp_host: localhost
+  smtp_port: 25
+  smtp_user: ""
+  smtp_password: ""
+  smtp_tls: false
+
+integrations:
+  plesk_api: false
+  plesk_host: ""
+  plesk_api_key: ""
+  cpanel_api: false
+  cpanel_host: ""
+  cpanel_user: ""
+  cpanel_token: ""
+  imap_enabled: true
+  imap_host: localhost
+  imap_port: 993
+  imap_ssl: true
+  dovecot_integration: true
+  dovecot_maildir: /var/vmail
+  rspamd_enabled: false
+  rspamd_host: localhost
+  rspamd_port: 11333
+  clamav_check: true
+  clamav_socket: /var/run/clamav/clamd.ctl
+
+intelligence:
+  ml_scoring: false
+  anomaly_detection: true
+  anomaly_threshold: 10
+  auto_tuning: false
+  pattern_analysis: true
+  geo_filtering: false
+  blocked_countries: []
+  spf_dkim_check: true
+  header_analysis: true
+  spam_categorization: true
+  
+  # NEW v3.0: SPF/DKIM/DMARC validation
+  spf_validation: true
+  dkim_validation: true
+  dmarc_validation: true
+  auth_weight: 0.3                 # Weight in scoring (0.0-1.0)
+  
+  # NEW v3.0: URL blacklist checking
+  url_blacklist_check: true
+  urlhaus_enabled: true            # abuse.ch URLhaus
+  phishtank_enabled: true
+  openphish_enabled: true
+  url_check_timeout: 5             # seconds
+  
+  # NEW v3.0: Auto-tuning
+  auto_tune_bayes: true
+  auto_tune_interval_days: 7
+  target_fp_rate: 0.01             # Target false positive rate (1%)
+  target_fn_rate: 0.05             # Target false negative rate (5%)
+  
+  # NEW v3.0: Pattern recognition
+  pattern_recognition: true
+  min_pattern_size: 5              # Minimum emails to identify pattern
+  pattern_clustering: true
+  
+  # NEW v3.0: False positive detection
+  false_positive_detection: true
+  fp_monitoring: true
+  fp_auto_retrain: true
+
+notifications:
+  email: true
+  email_to: terje@smartesider.no
+  slack_webhook: ""
+  discord_webhook: ""
+  telegram_bot_token: ""
+  telegram_chat_id: ""
+  sms_enabled: false
+  twilio_account_sid: ""
+  twilio_auth_token: ""
+  twilio_from_number: ""
+  twilio_to_number: ""
+  
+  # NEW v3.0: Webhook notifications
+  webhooks_enabled: false
+  webhook_on_high_spam: true       # Alert on spam spike
+  webhook_on_error: true
+  webhook_on_completion: false
+  high_spam_threshold: 100         # Alert if > 100 spam/hour
+
+
+# NEW v3.0: Advanced detection
+advanced:
+  # VirusTotal integration
+  virustotal_enabled: false
+  virustotal_api_key: ""
+  vt_scan_attachments: true
+  vt_scan_urls: true
+  vt_threshold: 3                  # Min detections to flag as malicious
+  
+  # Honeypot detection
+  honeypot_addresses:
+    - spam-trap@example.com
+  honeypot_auto_learn: true
+  
+  # Greylisting integration
+  greylisting_tracking: true
+  greylist_pattern_analysis: true
+  
+  # Header analysis
+  header_analysis_deep: true
+  suspicious_headers:
+    - X-Spam-Flag
+    - X-Spam-Status
+  check_received_chain: true
+  max_hops: 15
+  
+  # Compressed backups
+  compress_backups: true
+  compression_format: gzip         # gzip, bz2, xz
+
+# NEW v3.1: Virus & Phishing Protection
+threat_detection:
+  enabled: true                    # Master switch for threat detection
+  
+  # ClamAV virus scanning
+  clamav_enabled: true
+  scan_incoming: true              # Scan all incoming emails
+  
+  # Phishing detection
+  phishing_enabled: true
+  phishing_threshold: 70           # Minimum score to flag as phishing (0-100) - Raised to reduce false positives
+  
+  # URL analysis
+  check_url_shorteners: true
+  check_ip_urls: true
+  check_suspicious_tlds: true
+  
+  # Keyword analysis  
+  keyword_detection: true
+  urgency_detection: true
+
+# NEW v3.2: External Threat Databases
+threat_databases:
+  enabled: true                    # Master switch - ENABLED!
+  
+  # Google Safe Browsing API v4 (+25-30% detection improvement)
+  google_safe_browsing:
+    enabled: true                  # ENABLED!
+    api_key: "YOUR_GOOGLE_SAFE_BROWSING_API_KEY"  # Your API key
+    cache_duration: 86400          # 24 hours
+  
+  # PhishTank - WORKS WITHOUT API KEY! (+20-25% detection improvement)
+  # NOTE: PhishTank registration temporarily disabled as of Nov 2025
+  # Using PUBLIC feed (no authentication) - works great!
+  phishtank:
+    enabled: true                  # ENABLED! Using public feed
+    api_key: ""                    # OPTIONAL - Leave empty to use public feed (recommended!)
+    update_interval: 21600         # 6 hours
+  
+  # URLhaus (abuse.ch) - No API key needed! (+15-20% detection improvement)
+  urlhaus:
+    enabled: true                  # ENABLED!
+    update_interval: 3600          # 1 hour
+
+# NEW v3.1: Warning configuration
+warning:
+  subject_prepend: true            # Add warning to email subject
+  
+  # Warning prefixes (with emojis for visibility)
+  prefix_virus: "[⚠️ VIRUS]"
+  prefix_phishing: "[🚨 PHISHING]"
+  prefix_malware: "[⚠️ MALWARE]"
+  prefix_suspicious: "[⚠️ MISTENKELIG]"
+
+# NEW v3.3: Threat Handling Configuration (Løsninger 1, 4, 5)
+threat_handling:
+  # Løsning 1: X-Header Flagging (always enabled, non-invasive)
+  x_headers_enabled: true          # Add X-Threat-* headers to all threat emails
+  
+  # Løsning 4: Body Injection (HTML warning banner)
+  body_injection_enabled: false    # Inject warning banner in HTML emails (invasive)
+  
+  # Løsning 5: Quarantine System
+  quarantine_enabled: false        # Move high-risk emails to .Quarantine folder
+  quarantine_threshold: 80         # Minimum threat score for quarantine (0-100)
+  
+  # Løsning 5: Notification System
+  notification_enabled: false      # Send notification emails about threats
+  notification_smtp_host: localhost
+  notification_smtp_port: 25
+  notification_from: security@smartesider.no
+
+# NEW v3.2.1: Scan tracking configuration (incremental scanning)
+scan_tracking:
+  enabled: true                    # Master switch for incremental scanning
+  default_mode: incremental        # 'incremental', 'full', 'force-rescan'
+  
+  # Re-scan triggers
+  rescan_after_days: 30            # Re-scan all emails older than X days (0 = disabled)
+  rescan_if_modified: true         # Re-scan if file mtime changed
+  
+  # Database maintenance
+  cleanup_records_older_than_days: 365  # Delete scan records > 1 year old (0 = disabled)
+
+logging:
+  log_file: /tmp/spamtrainer.log
+  log_level: INFO
+  max_log_size: 10
+  backup_count: 5
+

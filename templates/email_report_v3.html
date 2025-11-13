@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpamAssassin Report - {{ report_date }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header .date {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 40px;
+            background: #f8f9fa;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        
+        .stat-value {
+            font-size: 42px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 10px 0;
+        }
+        
+        .section {
+            padding: 40px;
+        }
+        
+        .section-title {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .chart-container {
+            margin: 30px 0;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chart-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+        }
+        
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+        
+        tbody tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        tbody tr:hover {
+            background: #e9ecef;
+        }
+        
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .badge-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .recommendation {
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 10px;
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+        }
+        
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .footer p {
+            margin: 5px 0;
+            opacity: 0.8;
+        }
+        
+        /* Critical Alert Styles */
+        .alert-critical {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            padding: 30px;
+            margin: 0;
+            border-bottom: 5px solid #bd2130;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.9; }
+        }
+        
+        .alert-critical h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .alert-item {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            border-left: 5px solid white;
+        }
+        
+        .alert-item h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .alert-item .target {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        
+        .alert-item .details {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+        
+        .alert-item .action {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- CRITICAL ALERT: Server Blacklist Warning -->
+        {% if blacklist_warnings and blacklist_warnings|length > 0 %}
+        <div class="alert-critical">
+            <h2>🚨 CRITICAL: BLACKLIST DETECTED</h2>
+            <p style="text-align: center; font-size: 18px; margin-bottom: 20px;">
+                Your server IP or domains are listed on spam blacklists!
+            </p>
+            
+            {% for warning in blacklist_warnings %}
+            <div class="alert-item">
+                <h3>{{ warning.message }}</h3>
+                <div class="target">{{ warning.target }}</div>
+                
+                <div class="details">
+                    <strong>Type:</strong> {{ warning.type|upper }}<br>
+                    <strong>Severity:</strong> {{ warning.severity|upper }}<br>
+                    <strong>Listed on:</strong>
+                    <ul style="margin: 10px 0; padding-left: 20px;">
+                        {% for listing in warning.listed_on %}
+                        <li>
+                            <strong>{{ listing.list }}</strong>
+                            {% if listing.reason %}
+                            - {{ listing.reason }}
+                            {% endif %}
+                            (Code: {{ listing.code }})
+                            <br><em style="font-size: 12px;">Checked: {{ listing.checked }}</em>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <div class="action">
+                    ⚡ ACTION REQUIRED: {{ warning.action }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <!-- Header -->
+        <div class="header">
+            <h1>🛡️ SpamAssassin Learning Report</h1>
+            <div class="date">{{ report_date }}</div>
+            <div class="date">Period: Last {{ period_days }} days</div>
+        </div>
+        
+        <!-- Main Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Spam Learned</div>
+                <div class="stat-value">{{ stats.spam_learned }}</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">Ham Emails Learned</div>
+                <div class="stat-value">{{ stats.ham_learned }}</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">Total Processed</div>
+                <div class="stat-value">{{ total_learned }}</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">Spam Percentage</div>
+                <div class="stat-value">{{ "%.1f"|format(spam_percentage) }}%</div>
+            </div>
+        </div>
+        
+        <!-- Charts Section -->
+        <div class="section">
+            <h2 class="section-title">📊 Trend Analysis</h2>
+            
+            {% if has_spam_trend %}
+            <div class="chart-container">
+                <h3>Spam Detection Trend</h3>
+                <img src="cid:spam_trend" alt="Spam Trend Chart">
+            </div>
+            {% endif %}
+            
+            {% if has_spam_vs_ham %}
+            <div class="chart-container">
+                <h3>Spam vs Ham Distribution</h3>
+                <img src="cid:spam_vs_ham" alt="Spam vs Ham Chart">
+            </div>
+            {% endif %}
+            
+            {% if has_top_senders %}
+            <div class="chart-container">
+                <h3>Top Spam Senders</h3>
+                <img src="cid:top_senders" alt="Top Senders Chart">
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Top Spammers Table -->
+        {% if top_spammers %}
+        <div class="section">
+            <h2 class="section-title">🚫 Top Spam Senders</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Email Address</th>
+                        <th>Spam Count</th>
+                        <th>DNSBL Status</th>
+                        <th>Reported Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for email, spam_count, reported_at, reported in top_spammers %}
+                    <tr>
+                        <td>{{ email }}</td>
+                        <td><strong>{{ spam_count }}</strong></td>
+                        <td>
+                            {% if reported %}
+                            <span class="badge badge-danger">BLACKLISTED</span>
+                            {% else %}
+                            <span class="badge badge-success">CLEAN</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ reported_at or 'N/A' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+        
+        <!-- Pattern Analysis -->
+        {% if spam_domains %}
+        <div class="section">
+            <h2 class="section-title">🔍 Pattern Analysis</h2>
+            <h3>Top Spam Domains</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Domain</th>
+                        <th>Spam Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for domain, count in spam_domains %}
+                    <tr>
+                        <td>{{ domain }}</td>
+                        <td><strong>{{ count }}</strong></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+        
+        <!-- Performance Metrics -->
+        <div class="section">
+            <h2 class="section-title">⚡ Performance Metrics</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Total Emails Processed</td>
+                        <td><strong>{{ stats.emails_processed }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Senders Reported</td>
+                        <td><strong>{{ stats.senders_reported }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td>IPs Blocked</td>
+                        <td><strong>{{ stats.ips_blocked }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td>DNSBL Effectiveness</td>
+                        <td><strong>{{ "%.1f"|format(dnsbl_effectiveness) }}%</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Spamhaus Integration Stats (v3.0) -->
+        {% if spamhaus_stats %}
+        <div class="section">
+            <h2 class="section-title">🌐 Spamhaus Threat Intel Contributions</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Total Submissions (Last 30 Days)</td>
+                        <td><strong>{{ spamhaus_stats.total }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Confirmed in Spamhaus Dataset</td>
+                        <td><strong style="color: #28a745;">{{ spamhaus_stats.matched }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Success Rate</td>
+                        <td><strong>{{ "%.1f"|format((spamhaus_stats.matched / spamhaus_stats.total * 100) if spamhaus_stats.total > 0 else 0) }}%</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Global Impact</td>
+                        <td><strong>Helping protect millions of users worldwide</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            {% if spamhaus_submissions %}
+            <h3 style="margin-top: 30px;">Recent Confirmed Submissions</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Target</th>
+                        <th>Status</th>
+                        <th>Datasets</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for submission in spamhaus_submissions %}
+                    {% if submission.listed %}
+                    <tr>
+                        <td>{{ submission.submission_type.upper() }}</td>
+                        <td>{{ submission.source.object[:50] }}...</td>
+                        <td><span class="badge badge-danger">LISTED</span></td>
+                        <td><strong>{{ ", ".join(submission.listed) }}</strong></td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        </div>
+        {% endif %}
+        
+        <!-- Recommendations -->
+        <div class="section">
+            <h2 class="section-title">💡 Recommendations</h2>
+            {% for recommendation in recommendations %}
+            <div class="recommendation">
+                {{ recommendation }}
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>SpamAssassin Learning System v3.0</strong></p>
+            <p>Automated spam detection and learning</p>
+            <p>Generated: {{ report_date }}</p>
+        </div>
+    </div>
+</body>
+</html>

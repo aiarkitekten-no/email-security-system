@@ -1,0 +1,109 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+*.log.*
+/var/log/
+
+# Database files (SQLite)
+*.db
+*.sqlite
+*.sqlite3
+spamhaus_queue.db
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# Configuration files with secrets
+config.yaml
+config.yml
+.env
+.env.*
+
+# Keep example configs
+!config.yaml.example
+!config.yml.example
+!.env.example
+
+# SpamAssassin databases (can be large)
+*.cf
+*.pre
+bayes_*
+
+# Email files
+*.eml
+*.msg
+
+# Test files
+test_*.py
+*_test.py
+tests/__pycache__/
+
+# Coverage
+.coverage
+htmlcov/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# PID files
+*.pid
+
+# Lock files
+*.lock
+
+# Backup files
+*~
+*.backup
+*.old
+
+# Reports (may contain sensitive data)
+reports/*.html
+reports/*.json
+reports/*.csv
+
+# Keep report templates
+!reports/template.html
+
+# Documentation builds
+docs/_build/
+docs/.doctrees/
+
+# Secrets
+*.key
+*.pem
+*.crt
+api_keys.txt
+credentials.json
+secrets.json
+
+# Local development
+local_*.py
+dev_*.py
+scratch.py
