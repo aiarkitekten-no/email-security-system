@@ -239,6 +239,23 @@ advanced:
 threat_detection:
   enabled: true                    # Master switch for threat detection
   
+  # IMPORTANT: Whitelist your own domains/servers to prevent false positives
+  # All emails from these domains/servers will bypass threat detection
+  whitelist:
+    enabled: true
+    domains:
+      - yourdomain.com             # Add your domains here
+      - example.com
+    # Whitelist by hostname (e.g., from Received headers)
+    hostnames:
+      - mail.yourdomain.com
+      - server1.example.com
+    # Whitelist by sender email pattern (supports wildcards)
+    senders:
+      - "*@yourdomain.com"
+      - "*@example.com"
+      - "admin@example.com"
+  
   # ClamAV virus scanning
   clamav_enabled: true
   scan_incoming: true              # Scan all incoming emails

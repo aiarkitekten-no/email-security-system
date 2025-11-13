@@ -2099,6 +2099,12 @@ class VirusScanner:
         self.logger = logger
         self.enabled = config.get('threat_detection', 'clamav_enabled', True)
         
+        # Load whitelist configuration
+        self.whitelist_enabled = config.get('threat_detection', 'whitelist', 'enabled', False)
+        self.whitelist_domains = config.get('threat_detection', 'whitelist', 'domains', [])
+        self.whitelist_hostnames = config.get('threat_detection', 'whitelist', 'hostnames', [])
+        self.whitelist_senders = config.get('threat_detection', 'whitelist', 'senders', [])
+        
         if self.enabled:
             try:
                 import pyclamd
@@ -2114,12 +2120,77 @@ class VirusScanner:
                 self.logger.warning(f"ClamAV initialization failed: {e}, virus scanning disabled")
                 self.enabled = False
     
+    def _is_whitelisted(self, sender: str, msg) -> bool:
+        """Check if email is from whitelisted domain/sender/hostname"""
+        if not self.whitelist_enabled:
+            return False
+        
+        try:
+            from email.parser import BytesParser
+            from email import policy
+            
+            # Extract email address from sender
+            sender_email = sender.lower()
+            if '<' in sender_email:
+                sender_email = sender_email.split('<')[1].split('>')[0]
+            
+            # Check sender patterns
+            for pattern in self.whitelist_senders:
+                pattern_lower = pattern.lower()
+                if '*' in pattern_lower:
+                    # Wildcard matching
+                    domain_pattern = pattern_lower.replace('*@', '')
+                    if sender_email.endswith(domain_pattern):
+                        self.logger.info(f"✅ Whitelisted sender pattern: {sender_email} matches {pattern}")
+                        return True
+                elif pattern_lower == sender_email:
+                    self.logger.info(f"✅ Whitelisted sender: {sender_email}")
+                    return True
+            
+            # Check domains
+            sender_domain = sender_email.split('@')[-1] if '@' in sender_email else ''
+            if sender_domain in [d.lower() for d in self.whitelist_domains]:
+                self.logger.info(f"✅ Whitelisted domain: {sender_domain}")
+                return True
+            
+            # Check hostnames in Received headers
+            for header in msg.get_all('Received', []):
+                header_lower = str(header).lower()
+                for hostname in self.whitelist_hostnames:
+                    if hostname.lower() in header_lower:
+                        self.logger.info(f"✅ Whitelisted hostname in Received: {hostname}")
+                        return True
+            
+            return False
+            
+        except Exception as e:
+            self.logger.error(f"Error checking whitelist: {e}")
+            return False
+    
     def scan_email(self, email_path: str) -> Dict:
         """Scan email for viruses"""
         if not self.enabled:
             return {'infected': False}
         
         try:
+            # Check whitelist FIRST - read email headers
+            from email.parser import BytesParser
+            from email import policy
+            
+            try:
+                with open(email_path, 'rb') as f:
+                    msg = BytesParser(policy=policy.default).parse(f)
+                sender = msg.get('From', '')
+                
+                if self._is_whitelisted(sender, msg):
+                    return {
+                        'infected': False,
+                        'whitelisted': True
+                    }
+            except Exception as e:
+                self.logger.debug(f"Could not parse email for whitelist check: {e}")
+            
+            # Proceed with virus scan
             result = self.clam.scan_file(email_path)
             
             if result and email_path in result:
@@ -2181,6 +2252,56 @@ class PhishingDetector:
         self.enabled = config.get('threat_detection', 'phishing_enabled', True)
         self.threshold = config.get('threat_detection', 'phishing_threshold', 70)  # Get from config
         self.db_manager = db_manager  # External threat databases
+        
+        # Load whitelist configuration
+        self.whitelist_enabled = config.get('threat_detection', 'whitelist', 'enabled', False)
+        self.whitelist_domains = config.get('threat_detection', 'whitelist', 'domains', [])
+        self.whitelist_hostnames = config.get('threat_detection', 'whitelist', 'hostnames', [])
+        self.whitelist_senders = config.get('threat_detection', 'whitelist', 'senders', [])
+    
+    def _is_whitelisted(self, sender: str, msg) -> bool:
+        """Check if email is from whitelisted domain/sender/hostname"""
+        if not self.whitelist_enabled:
+            return False
+        
+        try:
+            # Extract email address from sender
+            sender_email = sender.lower()
+            if '<' in sender_email:
+                sender_email = sender_email.split('<')[1].split('>')[0]
+            
+            # Check sender patterns
+            for pattern in self.whitelist_senders:
+                pattern_lower = pattern.lower()
+                if '*' in pattern_lower:
+                    # Wildcard matching
+                    domain_pattern = pattern_lower.replace('*@', '')
+                    if sender_email.endswith(domain_pattern):
+                        self.logger.info(f"✅ Whitelisted sender pattern: {sender_email} matches {pattern}")
+                        return True
+                elif pattern_lower == sender_email:
+                    self.logger.info(f"✅ Whitelisted sender: {sender_email}")
+                    return True
+            
+            # Check domains
+            sender_domain = sender_email.split('@')[-1] if '@' in sender_email else ''
+            if sender_domain in [d.lower() for d in self.whitelist_domains]:
+                self.logger.info(f"✅ Whitelisted domain: {sender_domain}")
+                return True
+            
+            # Check hostnames in Received headers
+            for header in msg.get_all('Received', []):
+                header_lower = str(header).lower()
+                for hostname in self.whitelist_hostnames:
+                    if hostname.lower() in header_lower:
+                        self.logger.info(f"✅ Whitelisted hostname in Received: {hostname}")
+                        return True
+            
+            return False
+            
+        except Exception as e:
+            self.logger.error(f"Error checking whitelist: {e}")
+            return False
     
     def analyze_email(self, email_path: str) -> Dict:
         """Comprehensive phishing analysis"""
@@ -2188,6 +2309,21 @@ class PhishingDetector:
             return {'phishing': False, 'score': 0}
         
         try:
+            with open(email_path, 'rb') as f:
+                msg = BytesParser(policy=policy.default).parse(f)
+            
+            subject = msg.get('Subject', '')
+            sender = msg.get('From', '')
+            
+            # Check whitelist FIRST - bypass all checks if whitelisted
+            if self._is_whitelisted(sender, msg):
+                return {
+                    'phishing': False, 
+                    'score': 0, 
+                    'whitelisted': True,
+                    'subject': subject,
+                    'sender': sender
+                }
             with open(email_path, 'rb') as f:
                 msg = BytesParser(policy=policy.default).parse(f)
             
