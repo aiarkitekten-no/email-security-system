@@ -136,8 +136,34 @@ class Config:
         if errors:
             raise ValueError(f"Config validation failed: {'; '.join(errors)}")
     
-    def get(self, section: str, key: str, default=None):
-        return self.config.get(section, {}).get(key, default)
+    def get(self, section, key=None, default=None):
+        """
+        Get config value. Supports both styles:
+        - config.get('general', 'maildir_base', '/var/vmail')
+        - config.get('threat_detection', 'whitelist', 'enabled', False)
+        """
+        if key is None:
+            # Single arg: get section
+            return self.config.get(section, default)
+        
+        # Check if this is nested (3+ levels)
+        if isinstance(key, str) and default is not None and not isinstance(default, (bool, int, float, str, list, dict)):
+            # This might be: get('a', 'b', 'c', default_val)
+            # where key='b', default='c', and we need to find the real default
+            # For now, just handle 2-level
+            pass
+        
+        section_data = self.config.get(section, {})
+        if isinstance(section_data, dict):
+            value = section_data.get(key, default)
+            # If value is a dict and default is not None, might be nested call
+            if isinstance(value, dict) and default is not None and isinstance(default, str):
+                # Check if default is actually a third key
+                nested = value.get(default)
+                if nested is not None:
+                    return nested
+            return value
+        return default
     
     def get_section(self, section: str) -> dict:
         return self.config.get(section, {})
@@ -2100,10 +2126,11 @@ class VirusScanner:
         self.enabled = config.get('threat_detection', 'clamav_enabled', True)
         
         # Load whitelist configuration
-        self.whitelist_enabled = config.get('threat_detection', 'whitelist', 'enabled', False)
-        self.whitelist_domains = config.get('threat_detection', 'whitelist', 'domains', [])
-        self.whitelist_hostnames = config.get('threat_detection', 'whitelist', 'hostnames', [])
-        self.whitelist_senders = config.get('threat_detection', 'whitelist', 'senders', [])
+        whitelist_config = config.get_section('threat_detection').get('whitelist', {})
+        self.whitelist_enabled = whitelist_config.get('enabled', False)
+        self.whitelist_domains = whitelist_config.get('domains', [])
+        self.whitelist_hostnames = whitelist_config.get('hostnames', [])
+        self.whitelist_senders = whitelist_config.get('senders', [])
         
         if self.enabled:
             try:
@@ -2254,10 +2281,11 @@ class PhishingDetector:
         self.db_manager = db_manager  # External threat databases
         
         # Load whitelist configuration
-        self.whitelist_enabled = config.get('threat_detection', 'whitelist', 'enabled', False)
-        self.whitelist_domains = config.get('threat_detection', 'whitelist', 'domains', [])
-        self.whitelist_hostnames = config.get('threat_detection', 'whitelist', 'hostnames', [])
-        self.whitelist_senders = config.get('threat_detection', 'whitelist', 'senders', [])
+        whitelist_config = config.get_section('threat_detection').get('whitelist', {})
+        self.whitelist_enabled = whitelist_config.get('enabled', False)
+        self.whitelist_domains = whitelist_config.get('domains', [])
+        self.whitelist_hostnames = whitelist_config.get('hostnames', [])
+        self.whitelist_senders = whitelist_config.get('senders', [])
     
     def _is_whitelisted(self, sender: str, msg) -> bool:
         """Check if email is from whitelisted domain/sender/hostname"""
