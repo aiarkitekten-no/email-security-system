@@ -107,3 +107,4 @@ secrets.json
 local_*.py
 dev_*.py
 scratch.py
+snyk.exe
