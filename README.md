@@ -62,6 +62,17 @@ This system does exactly that. Built over hundreds of hours of development and b
 - **Multi-Source Validation**: Cross-references URLs across all three databases
 - **Link Extraction**: Deep inspection of email content and HTML links
 - **Threat Scoring**: Weighted scoring system for phishing probability
+- **Whitelist System (v3.3.2)**: Prevent false positives from your own domains/servers
+
+### 🛡️ Whitelist Protection (NEW v3.3.2)
+
+- **Domain Whitelisting**: Bypass detection for emails from your own domains
+- **Hostname Whitelisting**: Trust specific mail servers (checks Received headers)
+- **Sender Pattern Matching**: Flexible wildcards (`*@yourdomain.com`)
+- **Case-Insensitive**: Matches regardless of capitalization
+- **Fast Bypass**: Checked BEFORE all threat detection (< 1ms overhead)
+- **Comprehensive Logging**: Clear indication when emails are whitelisted
+- **Zero False Positives**: Prevents contact forms, system emails from being flagged
 
 ### 🌍 Global Threat Intelligence
 
@@ -250,6 +261,17 @@ general:
   maildir_base: /home/vmail             # Dovecot
   
   dry_run: false                        # Set true to test first
+
+# IMPORTANT: Whitelist your own domains to prevent false positives (NEW v3.3.2)
+threat_detection:
+  whitelist:
+    enabled: true
+    domains:
+      - yourdomain.com                  # Add your domains here
+    hostnames:
+      - mail.yourdomain.com             # Your mail servers
+    senders:
+      - "*@yourdomain.com"              # Wildcard patterns
 
 # Optional but powerful features:
 reporting:
@@ -614,8 +636,9 @@ tail -f /var/log/spamtrainer/spamtrainer.log
 
 ## 📚 Complete Documentation
 
-This repository includes **15+ comprehensive documentation files**:
+This repository includes **16+ comprehensive documentation files**:
 
+- **WHITELIST_CONFIGURATION.md**: Whitelist setup to prevent false positives (NEW v3.3.2)
 - **QUEUE_SETUP.md**: Complete queue system setup and configuration
 - **QUEUE_QUICKSTART.md**: Quick reference for queue management
 - **THREAT_HANDLING_v3.3.md**: Threat response configuration
